@@ -12,3 +12,59 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          String        @id @default(uuid())
+  username    String
+  email       String        @unique
+  password    String
+  role        Role
+  Reservation Reservation[]
+  Feedback    Feedback[]
+}
+
+model Reservation {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  facilityId String
+  startDate  DateTime
+  endDate    DateTime
+  status     Status
+
+  @@unique([userId, facilityId])
+}
+
+model Facility {
+  id           String        @id @default(uuid())
+  name         String
+  description  String
+  capacity     Int
+  availability Boolean
+  Reservation  Reservation[]
+  Feedback     Feedback[]
+}
+
+model Feedback {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  facilityId String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  STAFF
+}
+
+enum Status {
+  CONFIRMED
+  PENDING
+  CANCELLED
+}
