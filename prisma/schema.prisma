@@ -38,6 +38,7 @@ model Reservation {
 
 model Facility {
   id           String        @id @default(uuid())
+  roomNum      String        @unique
   name         String
   description  String
   capacity     Int
