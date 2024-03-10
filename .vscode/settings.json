@@ -4,4 +4,6 @@
         "editor.formatOnSave": true,
         "editor.detectIndentation": true
     },
+    "files.eol": "\n"
+    
 }
