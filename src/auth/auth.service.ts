@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 import { AuthDto } from './dto/auth.dto';
+import { Response as Res } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -11,32 +11,34 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  //   async signIn(signInDto: AuthDto) {
-  //     const currentUser = signInDto;
-  //     const { email, password, role } = await this.usersService.findByEmail(
-  //       currentUser.email,
-  //     );
-  //     if (
-  //       !currentUser ||
-  //       !this.validatePassword(password, currentUser.password)
-  //     ) {
-  //       throw new UnauthorizedException('Invalid email or password!');
-  //     }
+  async signIn(signInDto: AuthDto, res: Res) {
+    const currentUser = signInDto;
+    const { email, password, role } = await this.usersService.findByEmail(
+      currentUser.email,
+    );
+    if (
+      !currentUser ||
+      !this.validatePassword(password, currentUser.password)
+    ) {
+      throw new UnauthorizedException('Invalid email or password!');
+    }
 
-  //     // //Testing
-  //     // switch (user.role) {
-  //     //   case Role.STUDENT:
-  //     //     return 'Welcome Student!';
-  //     //   case Role.TEACHER:
-  //     //     return 'Welcome Teacher';
-  //     //   case Role.STAFF:
-  //     //     return 'Welcome Staff';
-  //     //   default:
-  //     //     return 'Why are you here?';
-  //     // }
-  //   }
+    const payload = { email: email, role: role };
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
 
-  //   validatePassword(password: string, storedPassword: string): boolean {
-  //     return password == storedPassword;
-  //   }
+    console.log('accessToken', accessToken);
+
+    res.set({
+      'x-access-token': accessToken,
+      'Access-Control-Expose-Headers': 'x-access-token',
+    });
+
+    return res.json({ email, role });
+  }
+
+  validatePassword(password: string, storedPassword: string): boolean {
+    return password == storedPassword;
+  }
 }
