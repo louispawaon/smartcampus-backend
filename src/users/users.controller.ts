@@ -13,7 +13,9 @@ import { Roles } from 'src/auth/dto/role.dto';
 import { RoleGuard } from 'src/auth/role.guard';
 import { UsersService } from './users.service';
 import {
+  ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -52,6 +54,11 @@ export class UsersController {
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 200, description: 'Returns all users.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  @ApiHeader({
+    name: 'x-access-token',
+    description: 'Bearer token to authorize the request',
+  })
   @Get()
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
@@ -64,6 +71,11 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
+  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  @ApiHeader({
+    name: 'x-access-token',
+    description: 'Bearer token to authorize the request',
+  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getUserDetails(@Param('id', ParseUUIDPipe) id: string) {
@@ -77,6 +89,11 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'Returns the updated user details.',
+  })
+  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  @ApiHeader({
+    name: 'x-access-token',
+    description: 'Bearer token to authorize the request',
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
