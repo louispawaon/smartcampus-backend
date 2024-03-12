@@ -12,18 +12,16 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: AuthDto, res: Res) {
-    const currentUser = signInDto;
-    const { email, password, role } = await this.usersService.findByEmail(
-      currentUser.email,
-    );
-    if (
-      !currentUser ||
-      !this.validatePassword(password, currentUser.password)
-    ) {
+    console.log(signInDto);
+
+    const { email, password, role } = signInDto;
+    const user = await this.usersService.findByEmail(email);
+
+    if (!user || !this.validatePassword(password, user.password)) {
       throw new UnauthorizedException('Invalid email or password!');
     }
 
-    const payload = { email: email, role: role };
+    const payload = { email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
