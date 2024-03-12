@@ -27,8 +27,38 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { email },
+    });
+  }
+
+  async getAll() {
+    return await this.prisma.user.findMany();
+  }
+
+  async getUserDetails(id: string): Promise<User | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+        include: {
+          Feedback: true,
+          Reservation: true,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error retrieving user details:', error);
+      throw error;
+    }
+  }
+
+  async updateUserDetails(
+    id: string,
+    updatedFields: Partial<User>,
+  ): Promise<User | null> {
+    return await this.prisma.user.update({
+      where: { id },
+      data: updatedFields,
     });
   }
 }
