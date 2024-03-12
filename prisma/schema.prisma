@@ -41,14 +41,13 @@ model Reservation {
 }
 
 model Facility {
-  id           String        @id @default(uuid())
-  roomNum      String        @unique
-  name         String
-  description  String
-  capacity     Int
-  availability Boolean
-  Reservation  Reservation[]
-  Feedback     Feedback[]
+  id          String        @id @default(uuid())
+  roomNum     String        @unique
+  name        String
+  description String?
+  capacity    Int?
+  Reservation Reservation[]
+  Feedback    Feedback[]
 }
 
 model Equipment {
