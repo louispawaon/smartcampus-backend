@@ -21,6 +21,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password!');
     }
 
+    if (user.role !== role) {
+      throw new UnauthorizedException('Invalid role!');
+    }
+
     const payload = { email: user.email, role: user.role };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,

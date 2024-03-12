@@ -3,7 +3,6 @@ import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { Response } from 'express';
-
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -17,11 +16,15 @@ export class AuthController {
       const result = await this.authService.signIn(authDto, res);
       return result;
     } catch (error) {
-      console.log(error);
       if (error.message === 'Invalid email or password!') {
-        console.log('here');
         await this.userService.createUser(authDto);
         return this.signIn(authDto, res);
+      } else if (error.message === 'Invalid role!') {
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          message: 'Invalid Role!',
+          error: 'Unauthorized',
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
       } else {
         return res.status(HttpStatus.UNAUTHORIZED).json({
           message: 'Invalid email or password!',
