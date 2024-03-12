@@ -7,6 +7,8 @@ declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors();
+
   //Swagger Documentation
   const config = new DocumentBuilder()
     .setTitle('SmartCampus API')
