@@ -12,11 +12,12 @@ export class UsersService {
   }
 
   async createUser(signUpDto: AuthDto) {
-    const { email, password, role } = signUpDto;
+    const { supabaseId, email, password, role } = signUpDto;
     const username = this.extractUsername(email);
 
     const user = await this.prisma.user.create({
       data: {
+        supabaseId,
         email,
         password,
         role,
