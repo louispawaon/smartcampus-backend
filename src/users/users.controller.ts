@@ -82,6 +82,24 @@ export class UsersController {
     return await this.userService.getUserDetails(id);
   }
 
+  @ApiOperation({ summary: 'Get User Details by Supabase User UID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
+  @ApiResponse({ status: 200, description: 'Returns the user details.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @Get('/supabase/:supabaseId')
+  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  @ApiHeader({
+    name: 'x-access-token',
+    description: 'Bearer token to authorize the request',
+  })
+  @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
+  @UseGuards(AuthGuard, RoleGuard)
+  async getUserDetailsSupabase(
+    @Param('supabaseId', ParseUUIDPipe) supabaseId: string,
+  ) {
+    return await this.userService.getUserDetailsSupabase(supabaseId);
+  }
+
   /* PUT REQUESTS */
   @ApiOperation({ summary: 'Update User Details by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })

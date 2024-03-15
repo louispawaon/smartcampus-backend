@@ -53,6 +53,22 @@ export class UsersService {
     }
   }
 
+  async getUserDetailsSupabase(supabaseId: string): Promise<User | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { supabaseId },
+        include: {
+          Feedback: true,
+          Reservation: true,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error retrieving user details:', error);
+      throw error;
+    }
+  }
+
   async updateUserDetails(
     id: string,
     updatedFields: Partial<User>,
