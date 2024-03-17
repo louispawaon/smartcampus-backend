@@ -2,16 +2,16 @@ import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FacilityDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   roomNum: string;
 
   @ApiProperty()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   capacity: number;
 }

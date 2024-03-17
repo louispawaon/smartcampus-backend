@@ -17,10 +17,10 @@ export class UsersDto {
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   fullName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   idNum: string;
 
   @ApiProperty()
