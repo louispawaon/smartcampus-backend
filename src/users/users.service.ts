@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { AuthDto } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersDto } from './dto/users.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,8 +11,8 @@ export class UsersService {
     return email.split('@')[0];
   }
 
-  async createUser(signUpDto: AuthDto) {
-    const { supabaseId, email, password, role } = signUpDto;
+  async createUser(userDto: UsersDto) {
+    const { supabaseId, email, password, fullName, idNum, role } = userDto;
     const username = this.extractUsername(email);
 
     const user = await this.prisma.user.create({
@@ -20,6 +20,8 @@ export class UsersService {
         supabaseId,
         email,
         password,
+        fullName,
+        idNum,
         role,
         username,
       },

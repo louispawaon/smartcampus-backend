@@ -19,7 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { FacilitiesService } from './facilities.service';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Facility, Role, User } from '@prisma/client';
+import { Facility, Role } from '@prisma/client';
 import { Roles } from 'src/auth/dto/role.dto';
 import { RoleGuard } from 'src/auth/role.guard';
 import { FacilityDto } from './dto/facility.dto';
@@ -57,7 +57,7 @@ export class FacilitiesController {
   })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getFacilityDetails(@Param('id', ParseUUIDPipe) id: string) {
+  async getFacilityDetails(@Param('id', ParseUUIDPipe) id: number) {
     return await this.facilityService.getFacilityDetails(id);
   }
 
@@ -97,8 +97,8 @@ export class FacilitiesController {
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async updateFacilityDetails(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updatedFields: Partial<User>,
+    @Param('id', ParseUUIDPipe) id: number,
+    @Body() updatedFields: Partial<Facility>,
   ): Promise<Facility> {
     return await this.facilityService.updateFacilityDetails(id, updatedFields);
   }

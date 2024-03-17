@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { Departments } from 'src/data/Facilities';
+import { Facilities } from '../src/data/Facilities';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  for (const facility of Departments) {
+  for (const facility of Facilities) {
     await prisma.facility.create({
       data: {
         roomNum: facility.roomNum,

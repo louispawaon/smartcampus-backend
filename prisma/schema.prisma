@@ -9,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -27,25 +28,25 @@ model User {
 }
 
 model Reservation {
-  id           String      @id @default(uuid())
-  user         User        @relation(fields: [userId], references: [id])
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
   userId       String
-  facility     Facility    @relation(fields: [facilityId], references: [id])
-  facilityId   String
+  facility     Facility @relation(fields: [facilityId], references: [id])
+  facilityId   Int
   department   String?
   purpose      String?
-  filingDate   DateTime    @default(now())
+  filingDate   DateTime @default(now())
   startDate    DateTime
   endDate      DateTime
-  status       Status
-  equipments   Equipment[]
-  equipmentQty Int[]       @default([0])
+  status       Status   @default(PENDING)
+  equipments   String[]
+  equipmentQty Int[]    @default([0])
 
   @@unique([userId, facilityId])
 }
 
 model Facility {
-  id          String        @id @default(uuid())
+  id          Int           @id @default(autoincrement())
   roomNum     String?       @unique
   name        String
   description String?
@@ -54,21 +55,12 @@ model Facility {
   Feedback    Feedback[]
 }
 
-model Equipment {
-  id            String      @id @default(uuid())
-  name          String
-  reservation   Reservation @relation(fields: [reservationId], references: [id])
-  reservationId String
-
-  @@unique([reservationId, name])
-}
-
 model Feedback {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [userId], references: [id])
   userId     String
   facility   Facility @relation(fields: [facilityId], references: [id])
-  facilityId String
+  facilityId Int
   rating     Int
   comment    String
   createdAt  DateTime @default(now())
