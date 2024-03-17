@@ -3,7 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class FacilityDto {
   @ApiProperty()
-  @IsNotEmpty()
   roomNum: string;
 
   @ApiProperty()
@@ -11,10 +10,8 @@ export class FacilityDto {
   name: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   description: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   capacity: number;
 }

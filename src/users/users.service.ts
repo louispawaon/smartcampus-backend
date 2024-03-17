@@ -12,11 +12,12 @@ export class UsersService {
   }
 
   async createUser(signUpDto: AuthDto) {
-    const { email, password, role } = signUpDto;
+    const { supabaseId, email, password, role } = signUpDto;
     const username = this.extractUsername(email);
 
     const user = await this.prisma.user.create({
       data: {
+        supabaseId,
         email,
         password,
         role,
@@ -40,6 +41,22 @@ export class UsersService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { id },
+        include: {
+          Feedback: true,
+          Reservation: true,
+        },
+      });
+      return user;
+    } catch (error) {
+      console.error('Error retrieving user details:', error);
+      throw error;
+    }
+  }
+
+  async getUserDetailsSupabase(supabaseId: string): Promise<User | null> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { supabaseId },
         include: {
           Feedback: true,
           Reservation: true,

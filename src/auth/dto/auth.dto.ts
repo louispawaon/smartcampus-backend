@@ -1,8 +1,13 @@
-import { IsEmail, IsNotEmpty, IsIn } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsIn, IsUUID } from 'class-validator';
 import { Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AuthDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  supabaseId: string;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()

@@ -14,7 +14,7 @@ export class AuthService {
   async signIn(signInDto: AuthDto, res: Res) {
     console.log(signInDto);
 
-    const { email, password, role } = signInDto;
+    const { supabaseId, email, password, role } = signInDto;
     const user = await this.usersService.findByEmail(email);
 
     if (!user || !this.validatePassword(password, user.password)) {
@@ -25,7 +25,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid role!');
     }
 
-    const payload = { email: user.email, role: user.role };
+    const payload = {
+      email: user.email,
+      role: user.role,
+      supabaseId: supabaseId,
+    };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
     });
@@ -37,7 +41,7 @@ export class AuthService {
       'Access-Control-Expose-Headers': 'x-access-token',
     });
 
-    return res.json({ email, role });
+    return res.json({ email, role, supabaseId });
   }
 
   validatePassword(password: string, storedPassword: string): boolean {
