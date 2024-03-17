@@ -37,7 +37,7 @@ export class FacilitiesService {
     return await this.prisma.facility.findMany();
   }
 
-  async getFacilityDetails(id: string): Promise<Facility | null> {
+  async getFacilityDetails(id: number): Promise<Facility | null> {
     try {
       const facility = await this.prisma.facility.findUnique({
         where: { id },
@@ -53,7 +53,7 @@ export class FacilitiesService {
   }
 
   async updateFacilityDetails(
-    id: string,
+    id: number,
     updatedFields: Partial<Facility>,
   ): Promise<Facility | null> {
     return await this.prisma.facility.update({
