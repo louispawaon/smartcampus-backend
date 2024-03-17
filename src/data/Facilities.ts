@@ -1,5 +1,5 @@
 import { FacilityDto } from 'src/facilities/dto/facility.dto';
-export const Departments: FacilityDto[] = [
+export const Facilities: FacilityDto[] = [
   {
     roomNum: 'R109',
     name: 'Hydraulics(CHE Pilot Plant)',
