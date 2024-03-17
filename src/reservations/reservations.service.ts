@@ -11,6 +11,8 @@ export class ReservationsService {
     reservationDto: ReservationsDto,
   ): Promise<Reservation> {
     const {
+      fullName,
+      idNum,
       userId,
       facilityId,
       department,
@@ -21,6 +23,22 @@ export class ReservationsService {
       equipments,
       equipmentQty,
     } = reservationDto;
+
+    const userWithNull = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { fullName: true, idNum: true },
+    });
+
+    if (!userWithNull.fullName && !userWithNull.idNum) {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          fullName: fullName,
+          idNum: idNum,
+        },
+      });
+    }
+
     return await this.prisma.reservation.create({
       data: {
         userId,
