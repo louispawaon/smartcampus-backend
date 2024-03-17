@@ -2,9 +2,9 @@ import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
+import { UsersDto } from 'src/users/dto/users.dto';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UsersDto } from 'src/users/dto/users.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -15,28 +15,26 @@ export class AuthController {
   ) {}
 
   @ApiOperation({
-    summary:
-      'Signs in existing users, creates an account and signs in if no existing account',
+    summary: 'Signs in Existing Users',
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successful sign-in' })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: 'Invalid credentials or role',
   })
-  @Post()
-  async signIn(
-    @Body() authDto: AuthDto,
-    @Body() userDto: UsersDto,
-    @Res() res: Response,
-  ) {
+  @Post('/sign-in')
+  async signIn(@Body() authDto: AuthDto, @Res() res: Response) {
     try {
       const result = await this.authService.signIn(authDto, res);
       return result;
     } catch (error) {
       console.log(error);
       if (error.message === 'Invalid email or password!') {
-        await this.userService.createUser(userDto);
-        return this.authService.signIn(authDto, res);
+        return res.status(HttpStatus.UNAUTHORIZED).json({
+          message: 'Invalid email or password!',
+          error: 'Unauthorized',
+          statusCode: HttpStatus.UNAUTHORIZED,
+        });
       } else if (error.message === 'Invalid role!') {
         return res.status(HttpStatus.UNAUTHORIZED).json({
           message: 'Invalid Role!',
@@ -44,12 +42,23 @@ export class AuthController {
           statusCode: HttpStatus.UNAUTHORIZED,
         });
       } else {
-        return res.status(HttpStatus.UNAUTHORIZED).json({
-          message: 'Invalid email or password!',
-          error: 'Unauthorized',
-          statusCode: HttpStatus.UNAUTHORIZED,
+        // Handle unexpected errors (optional)
+        console.error('Unexpected error:', error);
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: 'Internal Server Error',
+          error: 'InternalServerError',
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         });
       }
     }
+  }
+
+  @ApiOperation({
+    summary: 'Signs Up User',
+  })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Successful sign-up' })
+  @Post('/sign-up')
+  async signUp(@Body() userDto: UsersDto) {
+    return await this.userService.createUser(userDto);
   }
 }
