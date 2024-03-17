@@ -4,7 +4,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
-  Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
@@ -100,7 +100,7 @@ export class UsersController {
     return await this.userService.getUserDetailsSupabase(supabaseId);
   }
 
-  /* PUT REQUESTS */
+  /* PATCH REQUESTS */
   @ApiOperation({ summary: 'Update User Details by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiBody({ type: AuthDto, description: 'Update user details' })
@@ -115,7 +115,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @Put(':id')
+  @Patch(':id')
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async updateUserDetails(
