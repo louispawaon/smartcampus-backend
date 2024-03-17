@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UsersDto } from 'src/users/dto/users.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -23,14 +24,18 @@ export class AuthController {
     description: 'Invalid credentials or role',
   })
   @Post()
-  async signIn(@Body() authDto: AuthDto, @Res() res: Response) {
+  async signIn(
+    @Body() authDto: AuthDto,
+    @Body() userDto: UsersDto,
+    @Res() res: Response,
+  ) {
     try {
       const result = await this.authService.signIn(authDto, res);
       return result;
     } catch (error) {
       console.log(error);
       if (error.message === 'Invalid email or password!') {
-        await this.userService.createUser(authDto);
+        await this.userService.createUser(userDto);
         return this.authService.signIn(authDto, res);
       } else if (error.message === 'Invalid role!') {
         return res.status(HttpStatus.UNAUTHORIZED).json({
