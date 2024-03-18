@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpStatus,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
@@ -23,7 +30,7 @@ export class AuthController {
     description: 'Invalid credentials or role',
   })
   @Post('/sign-in')
-  async signIn(@Body() authDto: AuthDto, @Res() res: Response) {
+  async signIn(@Body(ValidationPipe) authDto: AuthDto, @Res() res: Response) {
     try {
       const result = await this.authService.signIn(authDto, res);
       return result;
@@ -58,7 +65,7 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successful sign-up' })
   @Post('/sign-up')
-  async signUp(@Body() userDto: UsersDto) {
+  async signUp(@Body(ValidationPipe) userDto: UsersDto) {
     return await this.userService.createUser(userDto);
   }
 }
