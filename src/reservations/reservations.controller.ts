@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/dto/role.dto';
 @ApiTags('Reservations')
+@ApiBearerAuth('JWT')
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
@@ -32,7 +33,6 @@ export class ReservationsController {
   @ApiResponse({ status: 200, description: 'Returns all reservations.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get()
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -51,7 +51,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -69,7 +68,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('sortByDate')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -88,7 +86,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('facility/:facilityId')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -109,7 +106,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('user/:userId/sortByDate')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -130,7 +126,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('user/:userId/facility/:facilityId')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -157,7 +152,6 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Post()
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -178,7 +172,6 @@ export class ReservationsController {
     description: 'Returns confirmed reservation',
   })
   @Patch(':id/confirm')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -205,7 +198,6 @@ export class ReservationsController {
     description: 'Returns cancelled reservation',
   })
   @Patch(':id/cancel')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -232,7 +224,6 @@ export class ReservationsController {
     description: 'Returns new status of reservation',
   })
   @Patch(':id/status')
-  @ApiBearerAuth()
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',

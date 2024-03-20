@@ -25,6 +25,7 @@ import { RoleGuard } from 'src/auth/role.guard';
 import { FacilityDto } from './dto/facility.dto';
 
 @ApiTags('Facilities')
+@ApiBearerAuth('JWT')
 @Controller('facilities')
 export class FacilitiesController {
   constructor(private readonly facilityService: FacilitiesService) {}
@@ -34,7 +35,6 @@ export class FacilitiesController {
   @ApiResponse({ status: 200, description: 'Returns all facilities.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get()
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -50,7 +50,6 @@ export class FacilitiesController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
