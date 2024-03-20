@@ -16,6 +16,7 @@ export class AuthService {
 
     const { supabaseId, email, password, role } = signInDto;
     const user = await this.usersService.findByEmail(email);
+    const userId = user.id;
 
     if (!user || !this.validatePassword(password, user.password)) {
       throw new UnauthorizedException('Invalid email or password!');
@@ -29,6 +30,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       supabaseId: supabaseId,
+      userId: user.id,
     };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
@@ -40,8 +42,8 @@ export class AuthService {
       'x-access-token': accessToken,
       'Access-Control-Expose-Headers': 'x-access-token',
     });
-
-    return res.json({ email, role, supabaseId });
+    console.log(userId, email, role, supabaseId);
+    return res.json({ userId, email, role, supabaseId });
   }
 
   validatePassword(password: string, storedPassword: string): boolean {
