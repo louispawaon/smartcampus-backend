@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -15,7 +17,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -33,14 +34,20 @@ export class ReservationsController {
   @ApiResponse({ status: 200, description: 'Returns all reservations.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get()
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async getAllReservations(): Promise<Reservation[]> {
-    return await this.reservationsService.getAllReservations();
+    try {
+      return await this.reservationsService.getAllReservations();
+    } catch (error) {
+      console.error('Error fetching all reseravtions:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch all reseravtions',
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Get Specific Reservation based on ID' })
@@ -51,14 +58,20 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async findReservation(@Param('id') id: string): Promise<Reservation> {
-    return await this.reservationsService.findReservation(id);
+    try {
+      return await this.reservationsService.findReservation(id);
+    } catch (error) {
+      console.error('Error fetching reservation details:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch reservation details',
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Sort Reseravtions by Date' })
@@ -68,14 +81,20 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('sortByDate')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async sortReservationByDate(): Promise<Reservation[]> {
-    return await this.reservationsService.sortReservationByDate();
+    try {
+      return await this.reservationsService.sortReservationByDate();
+    } catch (error) {
+      console.error('Error fetching sorted facilities by date:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch sorted facilities by date',
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Sort Reservations based on Facility' })
@@ -86,16 +105,24 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('facility/:facilityId')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async getReservationsByFacility(
     @Param('facilityId') facilityId: number,
   ): Promise<Reservation[]> {
-    return await this.reservationsService.getReservationsByFacility(facilityId);
+    try {
+      return await this.reservationsService.getReservationsByFacility(
+        facilityId,
+      );
+    } catch (error) {
+      console.error('Error fetching sorted reserations by facility:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch sorted reservations by facility',
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Sort User Reservations by Date' })
@@ -106,14 +133,20 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('user/:userId/sortByDate')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async sortUserReservationsByDate(@Param('userId') userId: string) {
-    return await this.reservationsService.sortUserReservationsByDate(userId);
+    try {
+      return await this.reservationsService.sortUserReservationsByDate(userId);
+    } catch (error) {
+      console.error('Error fetching user reservations by date:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch user reservations by date',
+      );
+    }
   }
 
   @ApiOperation({ summary: 'Sort User Reservations by Facility' })
@@ -126,24 +159,30 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('user/:userId/facility/:facilityId')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async sortUserReservationsByFacility(
     @Param('userId') userId: string,
     @Param('facilityId') facilityId: number,
   ) {
-    return await this.reservationsService.sortUserReservationsByFacility(
-      userId,
-      facilityId,
-    );
+    try {
+      return await this.reservationsService.sortUserReservationsByFacility(
+        userId,
+        facilityId,
+      );
+    } catch (error) {
+      console.error('Error fetching user reservations by facility:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch user reservations by facility',
+      );
+    }
   }
 
   /*POST REQUESTS*/
-  @ApiOperation({ summary: 'Sort User Reservations by Facility' })
+  @ApiOperation({ summary: 'Create Reservation' })
   @ApiBody({ type: ReservationsDto, description: 'Create Facility Details' })
   @ApiResponse({
     status: 200,
@@ -152,16 +191,20 @@ export class ReservationsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Post()
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async createReservation(
     @Body() reservationDto: ReservationsDto,
   ): Promise<Reservation> {
-    return await this.reservationsService.createReservation(reservationDto);
+    try {
+      return await this.reservationsService.createReservation(reservationDto);
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to create reservation');
+    }
   }
 
   /*PATCH REQUESTS*/
@@ -172,22 +215,26 @@ export class ReservationsController {
     description: 'Returns confirmed reservation',
   })
   @Patch(':id/confirm')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async confirmReservation(@Param('id') id: string) {
-    const confirmedReservation =
-      await this.reservationsService.confirmReservation(id);
-    if (confirmedReservation) {
-      return {
-        message: 'Reservation confirmed successfully',
-        reservation: confirmedReservation,
-      };
-    } else {
-      return { message: 'Reservation not found' };
+    try {
+      const confirmedReservation =
+        await this.reservationsService.confirmReservation(id);
+      if (confirmedReservation) {
+        return {
+          message: 'Reservation confirmed successfully',
+          reservation: confirmedReservation,
+        };
+      } else {
+        return { message: 'Reservation not found' };
+      }
+    } catch (error) {
+      console.error('Error confirming reservation:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to confirm reservation');
     }
   }
 
@@ -198,22 +245,26 @@ export class ReservationsController {
     description: 'Returns cancelled reservation',
   })
   @Patch(':id/cancel')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async cancelReservation(@Param('id') id: string) {
-    const cancelledReservation =
-      await this.reservationsService.cancelReservation(id);
-    if (cancelledReservation) {
-      return {
-        message: 'Reservation cancelled successfully',
-        reservation: cancelledReservation,
-      };
-    } else {
-      return { message: 'Reservation not found' };
+    try {
+      const cancelledReservation =
+        await this.reservationsService.cancelReservation(id);
+      if (cancelledReservation) {
+        return {
+          message: 'Reservation cancelled successfully',
+          reservation: cancelledReservation,
+        };
+      } else {
+        return { message: 'Reservation not found' };
+      }
+    } catch (error) {
+      console.error('Error cancelling reservation:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to cancel reservation');
     }
   }
 
@@ -224,16 +275,22 @@ export class ReservationsController {
     description: 'Returns new status of reservation',
   })
   @Patch(':id/status')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async changeReservationStatus(
     @Param('id') id: string,
     @Body('status') status: Status,
   ): Promise<Reservation | null> {
-    return await this.reservationsService.changeReservationStatus(status, id);
+    try {
+      return await this.reservationsService.changeReservationStatus(status, id);
+    } catch (error) {
+      console.error('Error changing reservation status:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to change reservation status',
+      );
+    }
   }
 }

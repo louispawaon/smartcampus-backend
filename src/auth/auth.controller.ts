@@ -5,6 +5,7 @@ import {
   Res,
   HttpStatus,
   ValidationPipe,
+  HttpException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from './auth.service';
@@ -49,8 +50,6 @@ export class AuthController {
           statusCode: HttpStatus.UNAUTHORIZED,
         });
       } else {
-        // Handle unexpected errors (optional)
-        console.error('Unexpected error:', error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           message: 'Internal Server Error',
           error: 'InternalServerError',
@@ -66,6 +65,18 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Successful sign-up' })
   @Post('/sign-up')
   async signUp(@Body(ValidationPipe) userDto: UsersDto) {
-    return await this.userService.createUser(userDto);
+    try {
+      return await this.userService.createUser(userDto);
+    } catch (error) {
+      console.error('Error during user sign-up:', error);
+      if (error instanceof HttpException) {
+        throw error; // Rethrow HTTP exceptions
+      } else {
+        throw new HttpException(
+          'Internal Server Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 }

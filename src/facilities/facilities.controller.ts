@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -11,7 +13,6 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -35,14 +36,18 @@ export class FacilitiesController {
   @ApiResponse({ status: 200, description: 'Returns all facilities.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get()
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getUsers() {
-    return await this.facilityService.getAllFacilities();
+    try {
+      return await this.facilityService.getAllFacilities();
+    } catch (error) {
+      console.error('Error fetching all facilities:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch all facilities');
+    }
   }
 
   @ApiOperation({ summary: 'Get Facility Details by ID' })
@@ -50,14 +55,20 @@ export class FacilitiesController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getFacilityDetails(@Param('id', ParseUUIDPipe) id: number) {
-    return await this.facilityService.getFacilityDetails(id);
+    try {
+      return await this.facilityService.getFacilityDetails(id);
+    } catch (error) {
+      console.error('Error fetching facility details:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch facility details',
+      );
+    }
   }
 
   /*POST REQUESTS*/
@@ -66,15 +77,19 @@ export class FacilitiesController {
   @ApiResponse({ status: 200, description: 'Returns the facility details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Post()
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async createFacility(@Body() facilityDto: FacilityDto) {
-    return await this.facilityService.createFacility(facilityDto);
+    try {
+      return await this.facilityService.createFacility(facilityDto);
+    } catch (error) {
+      console.error('Error creating facility', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to create facility');
+    }
   }
 
   /*PATCH REQUESTS*/
@@ -87,11 +102,6 @@ export class FacilitiesController {
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Patch(':id')
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
@@ -99,6 +109,19 @@ export class FacilitiesController {
     @Param('id', ParseUUIDPipe) id: number,
     @Body() updatedFields: Partial<Facility>,
   ): Promise<Facility> {
-    return await this.facilityService.updateFacilityDetails(id, updatedFields);
+    try {
+      return await this.facilityService.updateFacilityDetails(
+        id,
+        updatedFields,
+      );
+    } catch (error) {
+      console.error('Error updating facility:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to update facility details',
+      );
+    }
   }
 }

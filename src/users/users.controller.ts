@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -15,7 +17,6 @@ import { UsersService } from './users.service';
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -55,16 +56,19 @@ export class UsersController {
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 200, description: 'Returns all users.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Get()
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async getUsers() {
-    return await this.userService.getAll();
+    try {
+      return await this.userService.getAll();
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch users');
+    }
   }
 
   @ApiOperation({ summary: 'Get User Details by ID' })
@@ -75,7 +79,15 @@ export class UsersController {
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getUserDetails(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.userService.getUserDetails(id);
+    try {
+      return await this.userService.getUserDetails(id);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch user details');
+    }
   }
 
   @ApiOperation({ summary: 'Get User Details by Supabase User UID' })
@@ -83,17 +95,20 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('/supabase/:supabaseId')
-  // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getUserDetailsSupabase(
     @Param('supabaseId', ParseUUIDPipe) supabaseId: string,
   ) {
-    return await this.userService.getUserDetailsSupabase(supabaseId);
+    try {
+      return await this.userService.getUserDetailsSupabase(supabaseId);
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to fetch user details');
+    }
   }
 
   /* PATCH REQUESTS */
@@ -104,11 +119,6 @@ export class UsersController {
     status: 200,
     description: 'Returns the updated user details.',
   })
-  // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Patch(':id')
@@ -118,6 +128,14 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatedFields: Partial<User>,
   ): Promise<User> {
-    return await this.userService.updateUserDetails(id, updatedFields);
+    try {
+      return await this.userService.updateUserDetails(id, updatedFields);
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update user details');
+    }
   }
 }
