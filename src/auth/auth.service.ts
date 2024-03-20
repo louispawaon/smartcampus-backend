@@ -42,7 +42,7 @@ export class AuthService {
       'x-access-token': accessToken,
       'Access-Control-Expose-Headers': 'x-access-token',
     });
-    console.log(userId, email, role, supabaseId);
+
     return res.json({ userId, email, role, supabaseId });
   }
 

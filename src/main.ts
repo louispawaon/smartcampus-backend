@@ -13,6 +13,10 @@ async function bootstrap() {
 
   //Swagger Documentation
   const config = new DocumentBuilder()
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT',
+    )
     .setTitle('SmartCampus API')
     .setDescription('The official SmartCampus API Documentation')
     .setVersion('1.0')
