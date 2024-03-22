@@ -20,6 +20,16 @@ export class ReservationsDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
+  fullName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  idNum: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsNumber()
   facilityId: number;
 

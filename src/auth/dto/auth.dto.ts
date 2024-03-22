@@ -22,7 +22,6 @@ export class AuthDto {
   @IsIn([Role.STUDENT, Role.STAFF, Role.TEACHER])
   role: Role;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
   username: string;
 }

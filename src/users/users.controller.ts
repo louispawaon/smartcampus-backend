@@ -4,7 +4,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
-  Put,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
@@ -23,6 +23,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthDto } from 'src/auth/dto/auth.dto';
 
+@ApiBearerAuth('JWT')
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -54,7 +55,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({ status: 200, description: 'Returns all users.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  // Indicates that the API endpoint requires a bearer token
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -71,11 +72,6 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get(':id')
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
-  @ApiHeader({
-    name: 'x-access-token',
-    description: 'Bearer token to authorize the request',
-  })
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async getUserDetails(@Param('id', ParseUUIDPipe) id: string) {
@@ -87,7 +83,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('/supabase/:supabaseId')
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  // Indicates that the API endpoint requires a bearer token
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
@@ -100,7 +96,7 @@ export class UsersController {
     return await this.userService.getUserDetailsSupabase(supabaseId);
   }
 
-  /* PUT REQUESTS */
+  /* PATCH REQUESTS */
   @ApiOperation({ summary: 'Update User Details by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiBody({ type: AuthDto, description: 'Update user details' })
@@ -108,14 +104,14 @@ export class UsersController {
     status: 200,
     description: 'Returns the updated user details.',
   })
-  @ApiBearerAuth() // Indicates that the API endpoint requires a bearer token
+  // Indicates that the API endpoint requires a bearer token
   @ApiHeader({
     name: 'x-access-token',
     description: 'Bearer token to authorize the request',
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @Put(':id')
+  @Patch(':id')
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
   async updateUserDetails(
