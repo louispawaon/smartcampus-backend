@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { FacilitiesModule } from './facilities/facilities.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { PingModule } from './ping/ping.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { ReservationsModule } from './reservations/reservations.module';
     AuthModule,
     FacilitiesModule,
     ReservationsModule,
+    PingModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],
