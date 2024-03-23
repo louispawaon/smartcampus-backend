@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsIn, IsUUID } from 'class-validator';
 import { Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsMCMEmail } from 'src/validators/isMCMEmail';
 
 export class UsersDto {
   @ApiProperty()
@@ -11,6 +12,7 @@ export class UsersDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
+  @IsMCMEmail()
   email: string;
 
   @ApiProperty()
