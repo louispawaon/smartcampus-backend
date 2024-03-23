@@ -1,73 +1,110 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# SmartCampus
+The official Backend Repository of SmartCampus, a facility reservation system for Mapua Malayan Colleges Mindanao.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Technology Stack
+- [NestJS](https://docs.nestjs.com/) - Back-End Framework
+- [Prisma](https://www.prisma.io/docs) - Object Relational Mapping Tool
+- [Supabase](https://supabase.com/) - Database, Storage and Authentication Provider
+- [PostgreSQL](https://www.postgresql.org/) - Database Management System
+- [Git](https://git-scm.com/)/[Github](https://github.com/) - Version Control
+- [Swagger](https://swagger.io/) - API Endpoint Documentation and Testing
+- [Thunder Client](https://www.thunderclient.com/) - API Endpoint Testing
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Database Design
+### **Users**
 
-## Description
+| Type    | Column Name     | Type |
+| ------- | --------------- |--------------- |
+| String  | id           | *uuid default*|
+| String  | supabaseId            | *unique*|
+| String  | username          ||
+| String?  | fullName |*optional*|
+| String? | idNum         | *optional*|
+| String   | email          |*unique*|
+| String   | password          ||
+| Role  | role          ||
+| Reservation[]   | Reservation||
+| Feedback[]  | Feedback[]          ||
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### **Reservation**
 
-## Installation
+| Type    | Column Name     | Type |
+| ------- | --------------- |--------------- |
+| String  | id           | *uuid default*|
+| String?  | department           | *optional*|
+| String? | purpose          |*optional*|
+| Date  | fillingDate |*default (now())*|
+| Date | startDate         ||
+| Date   | endDate         ||
+| Status   | status||
+| Role  | role          ||
 
+### **Facility**
+
+| Type    | Column Name     | Type |
+| ------- | --------------- |--------------- |
+| Int  | id           | *autoincrement default*|
+| String?  | roomNum           | *optional*|
+| String | name          ||
+| String?  | description |*optional*|
+| Int? | capacity         |*optional*|
+
+### Role *enum*
+- STUDENT
+- TEACHER 
+- STAFF
+
+### Status *enum*
+- CONFIRMED
+- PENDING 
+- CANCELLED
+
+## Setting up the Application
+1. Clone the Repository
 ```bash
-$ npm install
+git clone git@github.com:louispawaon/smartcampus-backend.git
+```
+or
+```bash
+git clone https://github.com/louispawaon/smartcampus-backend.git
+```
+2. Fetch for updates
+```bash
+git fetch origin
+```
+3. Install the necessary libraries
+```bash
+npm i
+```
+4. Add a `.env` file locally based on the `.env.example` file
+5. Update the database by the Prisma Migrations
+```bash
+npx prisma migrate reset
+```
+```bash
+npx prisma generate
+```
+```bash
+npx prisma migrate dev
 ```
 
-## Running the app
-
+## Running your Application
+You may either perform the following:
+- Run the NestJS Back-End in development mode
+```
+npm run start:dev
+```
+- Run the NestJS Back-End with Hot-Reloading
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:hot
 ```
 
-## Test
-
+## Other Commands to rememeber
+- Perform Code Linting
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run lint
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- In cases that the database is reset, perform seed operation
+```
+npm run seed
+```
