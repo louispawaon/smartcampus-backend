@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 declare const module: any;
 
@@ -11,18 +10,6 @@ async function bootstrap() {
 
   app.enableCors();
   app.use(cookieParser());
-  app.useGlobalPipes(
-    new ValidationPipe({
-      exceptionFactory: (errors) => {
-        const result = errors.map((error) => ({
-          property: error.property,
-          message: error.constraints[Object.keys(error.constraints)[0]],
-        }));
-        return new BadRequestException(result);
-      },
-      stopAtFirstError: true,
-    }),
-  );
 
   //Swagger Documentation
   const config = new DocumentBuilder()
