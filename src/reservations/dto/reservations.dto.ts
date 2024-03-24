@@ -58,7 +58,7 @@ export class ReservationsDto {
   @ArrayMinSize(1)
   equipments: string[];
 
-  @ApiProperty()
+  @ApiProperty({ type: [Number] })
   @IsArray()
   @ArrayNotEmpty()
   @Min(0, { each: true })
