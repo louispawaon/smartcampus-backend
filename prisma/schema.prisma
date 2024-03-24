@@ -76,4 +76,5 @@ enum Status {
   CONFIRMED
   PENDING
   CANCELLED
+  FINISHED
 }
