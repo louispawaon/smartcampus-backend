@@ -8,7 +8,7 @@ export class ReservationsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /* STATUS CHECKER SERVICE */
-  @Cron('0 */5 * * * *')
+  @Cron('55 23 * * *')
   async checkReservationStatus() {
     const reservations = await this.prisma.reservation.findMany({
       where: {
