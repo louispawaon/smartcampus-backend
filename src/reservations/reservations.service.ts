@@ -18,9 +18,12 @@ export class ReservationsService {
       },
     });
 
-    const now = new Date();
+    const now = new Date().getTime();
+    const phOffset = 8 * 60 * 60 * 1000;
+    const nowWithPHTime = new Date(now + phOffset);
+
     const expiredReservations = reservations.filter(
-      (reservation) => new Date(reservation.endDate) <= new Date(now),
+      (reservation) => reservation.endDate <= nowWithPHTime,
     );
 
     for (const reservation of expiredReservations) {
