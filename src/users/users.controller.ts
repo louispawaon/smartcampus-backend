@@ -91,7 +91,11 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Get User Details by Supabase User UID' })
-  @ApiParam({ name: 'id', type: 'string', description: 'Supabase User UID' })
+  @ApiParam({
+    name: 'supabaseId',
+    type: 'string',
+    description: 'Supabase User UID',
+  })
   @ApiResponse({ status: 200, description: 'Returns the user details.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Get('/supabase/:supabaseId')
