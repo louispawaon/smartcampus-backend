@@ -12,10 +12,6 @@ async function bootstrap() {
   app.enableCors();
   app.use(cookieParser());
 
-  //Reservation Status Checker
-  const reservationStatus = app.get(ReservationsService);
-  reservationStatus.checkReservationStatus();
-
   //Swagger Documentation
   const config = new DocumentBuilder()
     .addBearerAuth(
