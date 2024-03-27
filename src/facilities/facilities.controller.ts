@@ -5,7 +5,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
@@ -57,7 +56,7 @@ export class FacilitiesController {
   @Get(':id')
   @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
   @UseGuards(AuthGuard, RoleGuard)
-  async getFacilityDetails(@Param('id', ParseUUIDPipe) id: number) {
+  async getFacilityDetails(@Param('id') id: number) {
     try {
       return await this.facilityService.getFacilityDetails(id);
     } catch (error) {
@@ -106,7 +105,7 @@ export class FacilitiesController {
   @Roles(Role.STAFF)
   @UseGuards(AuthGuard, RoleGuard)
   async updateFacilityDetails(
-    @Param('id', ParseUUIDPipe) id: number,
+    @Param('id') id: number,
     @Body() updatedFields: Partial<Facility>,
   ): Promise<Facility> {
     try {

@@ -39,8 +39,11 @@ export class FacilitiesService {
 
   async getFacilityDetails(id: number): Promise<Facility | null> {
     try {
+      const facilityId = typeof id === 'string' ? parseInt(id, 10) : id;
       const facility = await this.prisma.facility.findUnique({
-        where: { id },
+        where: {
+          id: facilityId,
+        },
         include: {
           Reservation: true,
         },
