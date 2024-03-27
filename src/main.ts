@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import { ReservationsService } from './reservations/reservations.service';
 
 declare const module: any;
 
@@ -10,6 +11,10 @@ async function bootstrap() {
 
   app.enableCors();
   app.use(cookieParser());
+
+  //Reservation Status Checker
+  const reservationStatus = app.get(ReservationsService);
+  reservationStatus.checkReservationStatus();
 
   //Swagger Documentation
   const config = new DocumentBuilder()

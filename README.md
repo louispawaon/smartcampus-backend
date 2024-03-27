@@ -58,6 +58,7 @@ The official Backend Repository of SmartCampus, a facility reservation system fo
 - CONFIRMED
 - PENDING 
 - CANCELLED
+- FINISHED
 
 ## Setting up the Application
 1. Clone the Repository
