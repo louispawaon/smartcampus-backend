@@ -41,6 +41,10 @@ export class ReservationsDto {
   @IsString()
   purpose?: string;
 
+  @ApiProperty({ required: false })
+  @IsString()
+  professorName?: string;
+
   @ApiProperty()
   @IsDateString()
   startDate: Date;
