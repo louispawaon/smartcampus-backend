@@ -55,6 +55,16 @@ export class ReservationsService {
     });
   }
 
+  async updateReservationDetails(
+    id: string,
+    updatedFields: Partial<Reservation>,
+  ): Promise<Reservation | null> {
+    return await this.prisma.reservation.update({
+      where: { id },
+      data: updatedFields,
+    });
+  }
+
   async getAllReservations() {
     return await this.prisma.reservation.findMany();
   }

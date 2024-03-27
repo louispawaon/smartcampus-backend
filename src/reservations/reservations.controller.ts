@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
@@ -186,8 +187,7 @@ export class ReservationsController {
   @ApiBody({ type: ReservationsDto, description: 'Create Facility Details' })
   @ApiResponse({
     status: 200,
-    description:
-      'Returns sorted reservations based on facility to the specific user',
+    description: 'Returns created reservation',
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Post()
@@ -208,6 +208,35 @@ export class ReservationsController {
   }
 
   /*PATCH REQUESTS*/
+
+  @ApiOperation({ summary: 'Update Reservation' })
+  @ApiBody({ type: ReservationsDto, description: 'Edit Reservation Details' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns updated reservation',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @Patch(':id')
+  @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
+  @UseGuards(AuthGuard, RoleGuard)
+  async updateReservation(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() reservationDto: ReservationsDto,
+  ): Promise<Reservation> {
+    try {
+      return await this.reservationsService.updateReservationDetails(
+        id,
+        reservationDto,
+      );
+    } catch (error) {
+      console.error('Error updating reservation:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update reservation');
+    }
+  }
+
   @ApiOperation({ summary: 'Confirm Reservation' })
   @ApiParam({ name: 'id', type: 'string', description: 'Reservation ID' })
   @ApiResponse({
