@@ -2,39 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReservationsDto } from './dto/reservations.dto';
 import { Reservation, Status } from '@prisma/client';
-import { Cron } from '@nestjs/schedule';
 @Injectable()
 export class ReservationsService {
   constructor(private readonly prisma: PrismaService) {}
-
-  /* STATUS CHECKER SERVICE */
-  @Cron('55 23 * * *')
-  async checkReservationStatus() {
-    const reservations = await this.prisma.reservation.findMany({
-      where: {
-        status: {
-          in: ['PENDING', 'CONFIRMED'],
-        },
-      },
-    });
-
-    const now = new Date().getTime();
-    const phOffset = 8 * 60 * 60 * 1000;
-    const nowWithPHTime = new Date(now + phOffset);
-
-    const expiredReservations = reservations.filter(
-      (reservation) => reservation.endDate <= nowWithPHTime,
-    );
-
-    for (const reservation of expiredReservations) {
-      await this.prisma.reservation.update({
-        where: { id: reservation.id },
-        data: { status: 'FINISHED' },
-      });
-    }
-
-    console.log('FINISHED EVENTS: ', expiredReservations);
-  }
 
   async createReservation(
     reservationDto: ReservationsDto,

@@ -28,19 +28,20 @@ model User {
 }
 
 model Reservation {
-  id           String   @id @default(uuid())
-  user         User     @relation(fields: [userId], references: [id])
-  userId       String
-  facility     Facility @relation(fields: [facilityId], references: [id])
-  facilityId   Int
-  department   String?
-  purpose      String?
-  filingDate   DateTime @default(now())
-  startDate    DateTime
-  endDate      DateTime
-  status       Status   @default(PENDING)
-  equipments   String[]
-  equipmentQty Int[]    @default([0])
+  id            String   @id @default(uuid())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  facility      Facility @relation(fields: [facilityId], references: [id])
+  facilityId    Int
+  department    String?
+  purpose       String?
+  professorName String?
+  filingDate    DateTime @default(now())
+  startDate     DateTime
+  endDate       DateTime
+  status        Status   @default(PENDING)
+  equipments    String[]
+  equipmentQty  Int[]    @default([0])
 
   @@unique([userId, facilityId])
 }
