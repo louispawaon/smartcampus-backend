@@ -2,9 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReservationsDto } from './dto/reservations.dto';
 import { Reservation, Status } from '@prisma/client';
+import { NotificationsService } from 'src/notifications/notifications.service';
+
 @Injectable()
 export class ReservationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly sseService: NotificationsService,
+  ) {}
 
   async createReservation(
     reservationDto: ReservationsDto,
@@ -108,17 +113,39 @@ export class ReservationsService {
   }
 
   async confirmReservation(id: string): Promise<Reservation | null> {
-    return await this.prisma.reservation.update({
+    const confirmedReservation = await this.prisma.reservation.update({
       where: { id },
       data: { status: Status.CONFIRMED },
     });
+
+    if (confirmedReservation) {
+      const userId = confirmedReservation.userId;
+      this.sseService.sendNotificationToUser(
+        userId,
+        `Reservation ${id} has been confirmed.`,
+        id,
+      );
+    }
+
+    return confirmedReservation;
   }
 
   async cancelReservation(id: string): Promise<Reservation | null> {
-    return await this.prisma.reservation.update({
+    const cancelledReservation = await this.prisma.reservation.update({
       where: { id },
       data: { status: Status.CANCELLED },
     });
+
+    if (cancelledReservation) {
+      const userId = cancelledReservation.userId;
+      this.sseService.sendNotificationToUser(
+        userId,
+        `Reservation ${id} has been cancelled.`,
+        id,
+      );
+    }
+
+    return cancelledReservation;
   }
 
   async sortUserReservationsByDate(userId: string) {
