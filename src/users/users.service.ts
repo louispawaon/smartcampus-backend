@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UsersDto } from './dto/users.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +11,7 @@ export class UsersService {
     return email.split('@')[0];
   }
 
-  async createUser(userDto: UsersDto) {
+  async createUser(userDto: CreateUserDto) {
     const { supabaseId, email, password, fullName, idNum, role } = userDto;
     const username = this.extractUsername(email);
 
