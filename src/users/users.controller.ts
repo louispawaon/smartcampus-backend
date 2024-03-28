@@ -22,7 +22,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthDto } from 'src/auth/dto/auth.dto';
+import { UsersDto } from './dto/users.dto';
 
 @ApiBearerAuth('JWT')
 @ApiTags('Users')
@@ -118,7 +118,7 @@ export class UsersController {
   /* PATCH REQUESTS */
   @ApiOperation({ summary: 'Update User Details by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
-  @ApiBody({ type: AuthDto, description: 'Update user details' })
+  @ApiBody({ type: UsersDto, description: 'Update user details' })
   @ApiResponse({
     status: 200,
     description: 'Returns the updated user details.',
