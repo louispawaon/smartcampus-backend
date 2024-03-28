@@ -24,6 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/dto/role.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 @ApiTags('Reservations')
 @ApiBearerAuth('JWT')
 @Controller('reservations')
@@ -210,7 +211,10 @@ export class ReservationsController {
   /*PATCH REQUESTS*/
 
   @ApiOperation({ summary: 'Update Reservation' })
-  @ApiBody({ type: ReservationsDto, description: 'Edit Reservation Details' })
+  @ApiBody({
+    type: UpdateReservationDto,
+    description: 'Edit Reservation Details',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns updated reservation',
@@ -221,7 +225,7 @@ export class ReservationsController {
   @UseGuards(AuthGuard, RoleGuard)
   async updateReservation(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() reservationDto: ReservationsDto,
+    @Body() reservationDto: UpdateReservationDto,
   ): Promise<Reservation> {
     try {
       return await this.reservationsService.updateReservationDetails(

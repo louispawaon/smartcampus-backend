@@ -20,10 +20,10 @@ export class UsersDto {
   password: string;
 
   @ApiProperty({ required: false })
-  fullName: string;
+  fullName?: string;
 
   @ApiProperty({ required: false })
-  idNum: string;
+  idNum?: string;
 
   @ApiProperty()
   @IsNotEmpty()
