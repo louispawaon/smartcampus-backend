@@ -4,29 +4,17 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsDateString,
-  IsEnum,
   IsString,
   Min,
   IsNumber,
 } from 'class-validator';
-import { Status } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ReservationsDto {
+export class UpdateReservationDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   userId: string;
-
-  @ApiProperty({ required: false })
-  @IsNotEmpty()
-  @IsString()
-  fullName?: string;
-
-  @ApiProperty({ required: false })
-  @IsNotEmpty()
-  @IsString()
-  idNum?: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -52,10 +40,6 @@ export class ReservationsDto {
   @ApiProperty()
   @IsDateString()
   endDate: Date;
-
-  @ApiProperty()
-  @IsEnum(Status)
-  status: Status;
 
   @ApiProperty()
   @IsArray()
