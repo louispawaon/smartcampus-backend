@@ -12,7 +12,8 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { UsersDto } from 'src/users/dto/users.dto';
 import { Response } from 'express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -62,6 +63,7 @@ export class AuthController {
   @ApiOperation({
     summary: 'Signs Up User',
   })
+  @ApiBody({ type: CreateUserDto, description: 'Create User Details' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Successful sign-up' })
   @Post('/sign-up')
   async signUp(@Body(ValidationPipe) userDto: UsersDto) {

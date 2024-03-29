@@ -36,6 +36,7 @@ model Reservation {
   department    String?
   purpose       String?
   professorName String?
+  classGrade    String?
   filingDate    DateTime @default(now())
   startDate     DateTime
   endDate       DateTime

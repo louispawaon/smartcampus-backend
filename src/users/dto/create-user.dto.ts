@@ -3,7 +3,7 @@ import { Role } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsMCMEmail } from 'src/validators/isMCMEmail';
 
-export class UsersDto {
+export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
@@ -29,7 +29,4 @@ export class UsersDto {
   @IsNotEmpty()
   @IsIn([Role.STUDENT, Role.STAFF, Role.TEACHER])
   role: Role;
-
-  @ApiProperty()
-  username: string;
 }
