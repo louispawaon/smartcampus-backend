@@ -8,7 +8,7 @@ import { FacilitiesModule } from './facilities/facilities.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { PingModule } from './ping/ping.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { NotificationsModule } from './notifications/notifications.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ReservationsModule,
     PingModule,
     ScheduleModule.forRoot(),
-    NotificationsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

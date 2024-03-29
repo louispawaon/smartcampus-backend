@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReservationsDto } from './dto/reservations.dto';
 import { Reservation, Status } from '@prisma/client';
-import { NotificationsService } from 'src/notifications/notifications.service';
+import { EmailSender } from 'src/email/emailSender';
 
 @Injectable()
 export class ReservationsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly sseService: NotificationsService,
+    private readonly emailSender: EmailSender,
   ) {}
 
   async createReservation(
@@ -118,14 +118,20 @@ export class ReservationsService {
       data: { status: Status.CONFIRMED },
     });
 
-    if (confirmedReservation) {
-      const userId = confirmedReservation.userId;
-      this.sseService.sendNotificationToUser(
-        userId,
-        `Reservation ${id} has been confirmed.`,
-        id,
-      );
-    }
+    const userEmail = await this.prisma.reservation.findUnique({
+      where: { id },
+      select: {
+        user: {
+          select: { email: true },
+        },
+      },
+    });
+
+    console.log(userEmail.user.email);
+    this.emailSender.sendEmail(
+      'lpawaon@gmail.com',
+      confirmedReservation.status,
+    );
 
     return confirmedReservation;
   }
@@ -136,14 +142,20 @@ export class ReservationsService {
       data: { status: Status.CANCELLED },
     });
 
-    if (cancelledReservation) {
-      const userId = cancelledReservation.userId;
-      this.sseService.sendNotificationToUser(
-        userId,
-        `Reservation ${id} has been cancelled.`,
-        id,
-      );
-    }
+    const userEmail = await this.prisma.reservation.findUnique({
+      where: { id },
+      select: {
+        user: {
+          select: { email: true },
+        },
+      },
+    });
+
+    console.log(userEmail.user.email);
+    this.emailSender.sendEmail(
+      'julaspanes@addu.edu.ph',
+      cancelledReservation.status,
+    );
 
     return cancelledReservation;
   }
