@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReservationsDto } from './dto/reservations.dto';
-import { Reservation, Status } from '@prisma/client';
+import { Reservation, Role, Status } from '@prisma/client';
 import { EmailSender } from 'src/email/emailSender';
 
 @Injectable()
@@ -44,7 +44,26 @@ export class ReservationsService {
       });
     }
 
-    return await this.prisma.reservation.create({
+    const staffUsers = await this.prisma.user.findMany({
+      where: { role: Role.STAFF },
+      select: {
+        email: true,
+      },
+    });
+
+    const staffEmails = staffUsers.map((user) => user.email);
+
+    const userEmail = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    const facilityName = await this.prisma.facility.findUnique({
+      where: { id: facilityId },
+      select: { name: true },
+    });
+
+    const createReservation = await this.prisma.reservation.create({
       data: {
         userId,
         facilityId,
@@ -58,6 +77,19 @@ export class ReservationsService {
         equipmentQty,
       },
     });
+
+    this.emailSender.sendStaffEmail(
+      staffEmails, //Replace with staffEmails
+      'Reservation Created',
+      createReservation.id,
+      facilityName.name,
+      userEmail.email,
+      createReservation.startDate.toLocaleString(),
+      createReservation.endDate.toLocaleString(),
+      createReservation.status,
+    );
+
+    return createReservation;
   }
 
   async updateReservationDetails(
@@ -127,9 +159,22 @@ export class ReservationsService {
       },
     });
 
-    console.log(userEmail.user.email);
-    this.emailSender.sendEmail(
-      'lpawaon@gmail.com',
+    const facilityName = await this.prisma.reservation.findUnique({
+      where: { id },
+      select: {
+        facility: {
+          select: { name: true },
+        },
+      },
+    });
+
+    this.emailSender.sendUserEmail(
+      userEmail.user.email, //Replace with userEmail.user.email
+      'Reservation Confirmation',
+      confirmedReservation.id,
+      facilityName.facility.name,
+      confirmedReservation.startDate.toLocaleString(),
+      confirmedReservation.endDate.toLocaleString(),
       confirmedReservation.status,
     );
 
@@ -151,9 +196,22 @@ export class ReservationsService {
       },
     });
 
-    console.log(userEmail.user.email);
-    this.emailSender.sendEmail(
-      'julaspanes@addu.edu.ph',
+    const facilityName = await this.prisma.reservation.findUnique({
+      where: { id },
+      select: {
+        facility: {
+          select: { name: true },
+        },
+      },
+    });
+
+    this.emailSender.sendUserEmail(
+      userEmail.user.email, //Replace with userEmail.user.email
+      'Reservation Confirmation',
+      cancelledReservation.id,
+      facilityName.facility.name,
+      cancelledReservation.startDate.toLocaleString(),
+      cancelledReservation.endDate.toLocaleString(),
       cancelledReservation.status,
     );
 
