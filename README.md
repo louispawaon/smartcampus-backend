@@ -33,6 +33,10 @@ The official Backend Repository of SmartCampus, a facility reservation system fo
 | String  | id           | *uuid default*|
 | String?  | department           | *optional*|
 | String? | purpose          |*optional*|
+| String? | professorName          |*optional*|
+| String? | classGrade          |*optional*|
+| String[] | equipments          |*optional*|
+| Int[] | equipmentQty         |*optional*|
 | Date  | fillingDate |*default (now())*|
 | Date | startDate         ||
 | Date   | endDate         ||
