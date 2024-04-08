@@ -221,6 +221,16 @@ export class ReservationsService {
   async getUserReservations(userId: string) {
     return await this.prisma.reservation.findMany({
       where: { userId },
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            idNum: true,
+            username: true,
+            email: true,
+          },
+        },
+      },
     });
   }
 
