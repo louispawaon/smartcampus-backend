@@ -100,7 +100,6 @@ export class ReservationsController {
   }
 
   @ApiOperation({ summary: 'Sort Reservations based on Facility' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Facility ID' })
   @ApiResponse({
     status: 200,
     description: 'Returns sorted reservations based on facility',
@@ -127,8 +126,30 @@ export class ReservationsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get User Reservations' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns reservations by a specific user',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @Get('user/:userId')
+  @Roles(Role.STAFF, Role.STUDENT, Role.TEACHER)
+  @UseGuards(AuthGuard, RoleGuard)
+  async getReservationByUser(@Param('userId') userId: string) {
+    try {
+      return await this.reservationsService.getUserReservations(userId);
+    } catch (error) {
+      console.error('Error fetching user reservations by date:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to fetch user reservations by date',
+      );
+    }
+  }
+
   @ApiOperation({ summary: 'Sort User Reservations by Date' })
-  @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiResponse({
     status: 200,
     description: 'Returns sorted reservations by date to the specific user',
@@ -152,8 +173,6 @@ export class ReservationsController {
   }
 
   @ApiOperation({ summary: 'Sort User Reservations by Facility' })
-  @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Facility ID' })
   @ApiResponse({
     status: 200,
     description:

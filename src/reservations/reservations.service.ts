@@ -218,6 +218,12 @@ export class ReservationsService {
     return cancelledReservation;
   }
 
+  async getUserReservations(userId: string) {
+    return await this.prisma.reservation.findMany({
+      where: { userId },
+    });
+  }
+
   async sortUserReservationsByDate(userId: string) {
     return await this.prisma.reservation.findMany({
       where: { userId },
