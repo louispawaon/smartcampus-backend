@@ -103,7 +103,11 @@ export class ReservationsService {
   }
 
   async getAllReservations() {
-    return await this.prisma.reservation.findMany();
+    return await this.prisma.reservation.findMany({
+      include: {
+        user: true,
+      },
+    });
   }
 
   async findReservation(id: string): Promise<Reservation> {
